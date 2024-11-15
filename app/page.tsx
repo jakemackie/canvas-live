@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useDraw } from "@/app/hooks/useDraw";
 import { TwitterPicker } from "react-color";
-import Aos from "@/app/ui/aos";
+import Aos from "@/components/ui/aos";
 
 export default function Home() {
   const [color, setColor] = useState("#000");
