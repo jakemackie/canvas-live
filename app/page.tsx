@@ -46,7 +46,13 @@ export default function Home() {
 
       <div className="flex flex-col" data-aos="fade-down">
         {isClient && <TwitterPicker color={color} onChange={(e) => setColor(e.hex)} />}
-        <button type="button" onClick={clear} className="z-10 p-2 rounded-b-md bg-blue-500 text-white outline outline-2 outline-blue-300">Clear</button>
+        <button 
+          type="button" 
+          onClick={clear} 
+          className="z-10 p-2 rounded-b-md bg-blue-500 text-white outline outline-2 focus:outline-4 outline-blue-300 hover:bg-red-500 hover:outline-red-300 transition-colors duration-300"
+        >
+            Clear
+          </button>
       </div>
     </div>
   );
