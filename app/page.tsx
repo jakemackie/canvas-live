@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDraw } from "./hooks/useDraw";
-import { ChromePicker } from "react-color";
+import { useDraw } from "@/app/hooks/useDraw";
+import { TwitterPicker } from "react-color";
+import Aos from "@/app/ui/aos";
 
 export default function Home() {
   const [color, setColor] = useState("#000");
@@ -32,18 +33,21 @@ export default function Home() {
   } 
 
   return (
-    <div className="min-h-screen w-screen bg-white flex justify-center items-center">
-      <div className="flex flex-col gap-10 pr-10">
-        {isClient && <ChromePicker color={color} onChange={(e) => setColor(e.hex)} />}
-        <button type="button" onClick={clear} className="p-2 rounded-md border border-black">Clear</button>
-      </div>
+    <div className="min-h-screen w-screen bg-white flex flex-col justify-center items-center gap-y-3">
+      <Aos />
+
       <canvas
         ref={canvasRef}
         onMouseDown={onMouseDown}
-        width={750}
-        height={750}
-        className="border border-black rounded-md"
+        width={820}
+        height={640}
+        className="px-3 md:px-0 bg-slate-50 border-2 border-slate-300 rounded-md"
       />
+
+      <div className="flex flex-col" data-aos="fade-down">
+        {isClient && <TwitterPicker color={color} onChange={(e) => setColor(e.hex)} />}
+        <button type="button" onClick={clear} className="z-10 p-2 rounded-b-md bg-blue-500 text-white outline outline-2 outline-blue-300">Clear</button>
+      </div>
     </div>
   );
 }
