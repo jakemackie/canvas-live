@@ -3,51 +3,66 @@
 import { useState, useEffect } from "react";
 import { useDraw } from "@/app/hooks/useDraw";
 import { TwitterPicker } from "react-color";
+import { io } from "socket.io-client";
+import { drawLine } from "@/utils/drawLine";
 import Aos from "@/components/ui/aos";
+
+const socket = io("http://localhost:3001");
 
 export default function Home() {
   const [color, setColor] = useState("#000");
-  const { canvasRef, onMouseDown, clear } = useDraw(drawLine);
+  const { canvasRef, onMouseDown, clear } = useDraw(createLine);
   const [isClient, setIsClient] = useState(false);
 
+  type DrawLineProps = {
+    prevPoint: Point | null;
+    currentPoint: Point;
+    color: string;
+  }
+
   useEffect(() => {
+    const ctx = canvasRef.current?.getContext("2d");
+
+    socket.emit("client-ready");
+
+    socket.on("get-canvas-state", () => {
+      if(!canvasRef.current?.toDataURL()) return;
+      socket.emit("canvas-state", canvasRef.current.toDataURL());
+    });
+
+    socket.on("canvas-state-from-server", (state: string) => {
+      const img = new Image();
+      img.src = state;
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0);
+      }
+    });
+
+    socket.on("draw-line", ({ prevPoint, currentPoint, color }: DrawLineProps) => {
+      if(!ctx) return;
+      drawLine({ prevPoint, currentPoint, ctx, color });
+    });
+
+    socket.on("clear", clear);
+
     setIsClient(true);
-  }, []);
 
-  function drawLine({ ctx, prevPoint, currentPoint }: Draw) {
-    const { x: currentX, y: currentY } = currentPoint;
-    const lineWidth = 5;
+    return () => {
+      socket.off("get-canvas-state");
+      socket.off("canvas-state-from-server");
+      socket.off("draw-line");
+      socket.off("clear");
+    }
+  }, [canvasRef]);
 
-    let startPoint = prevPoint ?? currentPoint;
-    ctx.beginPath();
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = color;
-    ctx.moveTo(startPoint.x, startPoint.y);
-    ctx.lineTo(currentX, currentY);
-    ctx.stroke();
-
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(startPoint.x, startPoint.y, 2, 0, 2 * Math.PI);
-    ctx.fill();
-  } 
+  function createLine({prevPoint, currentPoint, ctx}: Draw) {
+    socket.emit("draw-line", ({ prevPoint, currentPoint, color }));
+    drawLine({ prevPoint, currentPoint, ctx, color })
+  }
 
   return (
-    <div className="!overflow-x-hidden px-4 min-h-screen w-screen bg-white flex flex-col justify-center items-center gap-y-3">
+    <div className="overflow-hidden px-4 min-h-screen w-screen bg-white flex flex-col justify-center items-center gap-y-3">
       <Aos />
-
-      <div className="mx-auto md:max-w-lg flex flex-col justify-start">
-        <h1 className="mb-4    text-4xl md:text-6xl font-bold leading-normal bg-clip-text text-transparent bg-gradient-to-b from-black to-slate-600" data-aos="zoom-out">
-          Hiyield Gamejam
-        </h1>
-        <span 
-          className="mb-4 text-2xl leading-normal"
-          data-aos="fade-right"
-          data-aos-delay="300"  
-        >
-          by Jake
-        </span>
-      </div>
 
       <div className="z-10 relative px-3 md:px-0">
         <canvas
@@ -68,7 +83,7 @@ export default function Home() {
         {isClient && <TwitterPicker color={color} onChange={(e) => setColor(e.hex)} />}
         <button 
           type="button" 
-          onClick={clear} 
+          onClick={() => socket.emit("clear")}
           className="z-10 p-2 rounded-b-md bg-blue-500 text-white outline outline-2 focus:outline-4 outline-blue-300 hover:bg-red-500 hover:outline-red-300 transition-colors duration-300"
         >
             Clear
