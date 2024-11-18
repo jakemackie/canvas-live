@@ -1,0 +1,6 @@
+- [ ] Show how many players there are currently connected to the socket in the homepage (e.g. 4 people are drawing)
+- [ ] Styling
+- [ ] Incorporate Hiyield brand in styling somehow
+- [ ] Easter eggs!
+- [ ] Some game logic, unsure how to implement but worth giving a go
+- [ ] Splash screen that stops mouse interaction with the canvas (e.g. A modal saying "Round over!")
