@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Page() {
   return (
@@ -13,18 +12,9 @@ export default function Page() {
         </p>
       </div>
 
-      <div className="mx-auto flex justify-center w-1/2 border-2 border-red-500">
-        <Image
-          src="/drawing.png"
-          alt="Drawing on a canvas"
-          width={800}
-          height={400}
-        />
-      </div>
-
       <Link 
         href={`${process.env.CANONICAL_URL}/draw`}
-        className="mt-12 max-w-xs w-full text-center rounded-xl py-2 px-5 bg-blue-100 border-2 border-blue-300 text-blue-400"
+        className="mt-4 max-w-xs w-full text-center rounded-xl py-2 px-5 bg-blue-100 border-2 border-blue-300 text-blue-400"
       >
         Join drawing room
       </Link>
