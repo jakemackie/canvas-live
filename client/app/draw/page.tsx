@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDraw } from "@/app/hooks/useDraw";
 import { TwitterPicker } from "react-color";
@@ -61,10 +62,15 @@ export default function Home() {
   }
 
   return (
-    <div className="overflow-hidden px-4 min-h-screen w-screen bg-white flex flex-col justify-center items-center gap-y-3">
+    <div className="overflow-hidden px-4 min-h-screen w-screen flex flex-col justify-center items-center gap-y-3">
       <Aos />
 
       <div className="z-10 relative px-3 md:px-0">
+        <p className="text-sm text-center mb-2">
+          Remember,{" "}
+          <span className="italic underline decoration-wavy decoration-blue-500 [text-decoration-skip-ink:none]">anyone</span>
+          {" "}can draw on this canvas. Please be respectful.
+          </p>
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
@@ -86,9 +92,16 @@ export default function Home() {
           onClick={() => socket.emit("clear")}
           className="z-10 p-2 rounded-b-md bg-blue-500 text-white outline outline-2 focus:outline-4 outline-blue-300 hover:bg-red-500 hover:outline-red-300 transition-colors duration-300"
         >
-            Clear
-          </button>
+          Clear
+        </button>
       </div>
+
+      <Link 
+        href="/"
+        className="absolute p-5 bottom-5 left-5 rounded-xl bg-red-100 border-2 border-red-300 text-red-500"
+      >
+        Leave
+      </Link>
     </div>
   );
 }
